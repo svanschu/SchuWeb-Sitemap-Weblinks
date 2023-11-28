@@ -18,7 +18,6 @@ defined('_JEXEC') or die;
 
 use Joomla\Utilities\ArrayHelper;
 use Joomla\Component\Weblinks\Site\Helper\RouteHelper;
-use Joomla\Component\Weblinks\Site\Model\CategoryModel;
 
 class schuweb_sitemap_weblinks
 {
@@ -118,6 +117,10 @@ class schuweb_sitemap_weblinks
 			$node->lastmod = $parent->lastmod;
 			$node->modified = $cat->modified_time;
 
+            if ($sitemap->isNewssitemap()){
+                $node->modified = $cat->created_time;
+            }
+
 			$node->xmlInsertChangeFreq = $parent->xmlInsertChangeFreq;
 			$node->xmlInsertPriority = $parent->xmlInsertPriority;
 
@@ -142,13 +145,18 @@ class schuweb_sitemap_weblinks
 					$db->qn('title'),
 					$db->qn('url'),
 					$db->qn('params'),
-					$db->qn('modified')
+					$db->qn('modified'),
+                    $db->qn('created')
 				)
 			)
 				->from($db->qn('#__weblinks'))
 				->setLimit(ArrayHelper::getValue($params, 'max_links', null, 'INT'))
 				->order($db->escape('ordering') . ' ' . $db->escape('ASC'))
 				->where($db->qn('catid') . ' = ' . $db->q($category->id));
+            
+            if ($sitemap->isNewssitemap()){
+                $query->where($db->qn('created') .' > DATE_ADD(CURRENT_TIMESTAMP, INTERVAL -2 DAY)');
+            }
 
 			$db->setQuery($query);
 
@@ -179,6 +187,10 @@ class schuweb_sitemap_weblinks
 				$node->browserNav = $parent->browserNav;
 				$node->lastmod = $parent->lastmod;
 				$node->modified = $link->modified;
+
+                if ($sitemap->isNewssitemap()){
+                    $node->modified = $link->created;
+                }
 
 				$node->expandible = false;
 
