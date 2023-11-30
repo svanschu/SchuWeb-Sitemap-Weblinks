@@ -49,6 +49,10 @@ class schuweb_sitemap_weblinks
 
 	static function getTree(&$sitemap, &$parent, &$params)
 	{
+        //Image sitemap does not make sense for weblinks
+        if ($sitemap->isImagesitemap())
+            return false;
+
 		$link_query = parse_url($parent->link);
 		parse_str(html_entity_decode($link_query['query']), $link_vars);
 		$view = ArrayHelper::getValue($link_vars, 'view', 0);
