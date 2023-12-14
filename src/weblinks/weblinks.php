@@ -1,21 +1,18 @@
 <?php
+/**
+ * @version     sw.build.version
+ * @copyright   Copyright (C) 2019 - 2023 Sven Schultschik. All rights reserved
+ * @license     GPL-3.0-or-later
+ * @author      Sven Schultschik (extensions@schultschik.de)
+ * @link        extensions.schultschik.de
+ */
+
+defined('_JEXEC') or die;
+
 use Joomla\CMS\Categories\Categories;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
-
-/**
- * @package             SchuWeb Sitemap
- *
- * @version             sw.build.version
- * @author              Sven Schultschik
- * @copyright (C)       2010 - 2023 Sven Schultschik. All rights reserved
- * @license             http://www.gnu.org/copyleft/gpl.html GNU/GPL
- * @link                http://www.schultschik.de
- **/
-
-defined('_JEXEC') or die;
-
 use Joomla\Utilities\ArrayHelper;
 use Joomla\Component\Weblinks\Site\Helper\RouteHelper;
 
