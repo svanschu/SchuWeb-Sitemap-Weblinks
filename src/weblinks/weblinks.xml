@@ -15,7 +15,7 @@
     </files>
     <updateservers>
         <server type="extension" priority="1" name="SchuWeb Sitemap - Weblinks Integration">
-            https://raw.githubusercontent.com/svanschu/SchuWeb-Sitemap/master/update/schuweb_sitemap_plugin_weblinks.xml
+            https://raw.githubusercontent.com/svanschu/SchuWeb-Sitemap-Weblinks/main/update.xml
         </server>
     </updateservers>
     <scriptfile>script.php</scriptfile>
