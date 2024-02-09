@@ -115,15 +115,11 @@ class schuweb_sitemap_weblinks
 			$node->priority = $params['cat_priority'];
 			$node->changefreq = $params['cat_changefreq'];
 			$node->browserNav = $parent->browserNav;
-			$node->lastmod = $parent->lastmod;
 			$node->modified = $cat->modified_time;
 
             if ($sitemap->isNewssitemap()){
                 $node->modified = $cat->created_time;
             }
-
-			$node->xmlInsertChangeFreq = $parent->xmlInsertChangeFreq;
-			$node->xmlInsertPriority = $parent->xmlInsertPriority;
 
 			$node->expandible = true;
 
@@ -183,10 +179,7 @@ class schuweb_sitemap_weblinks
 				$node->priority = $params['link_priority'];
 				$node->changefreq = $params['link_changefreq'];
 
-				$node->xmlInsertChangeFreq = $parent->xmlInsertChangeFreq;
-				$node->xmlInsertPriority = $parent->xmlInsertPriority;
 				$node->browserNav = $parent->browserNav;
-				$node->lastmod = $parent->lastmod;
 				$node->modified = $link->modified;
 
                 if ($sitemap->isNewssitemap()){
