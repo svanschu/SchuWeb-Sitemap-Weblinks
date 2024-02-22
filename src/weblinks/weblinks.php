@@ -172,7 +172,7 @@ class schuweb_sitemap_weblinks
 				$Itemid = intval(preg_replace('/.*Itemid=([0-9]+).*/', '$1', RouteHelper::getWeblinkRoute($link->id, $category->id)));
 
 				if ($item_params->get('count_clicks', $params['count_clicks']) == "1") {
-					$node->link = 'index.php?option=schuweb_sitemap_weblinks&task=weblink.go&id=' . $link->id . '&Itemid=' . ($Itemid ?: $parent->id);
+					$node->link = 'index.php?option=com_weblinks&task=weblink.go&id=' . $link->id . '&Itemid=' . ($Itemid ?: $parent->id);
 				} else {
 					$node->link = $link->url;
 				}
