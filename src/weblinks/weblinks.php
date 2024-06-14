@@ -15,6 +15,7 @@ use Joomla\CMS\Factory;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\Component\Weblinks\Site\Helper\RouteHelper;
+use Joomla\Database\ParameterType;
 
 class schuweb_sitemap_weblinks
 {
@@ -136,6 +137,7 @@ class schuweb_sitemap_weblinks
 		if ($params['include_links']) {
 			$db = Factory::getDbo();
 			$query = $db->getQuery(true);
+            $now   = Factory::getDate()->toSql();
 			$query->select(
 				array(
 					$db->qn('id'),
@@ -149,8 +151,26 @@ class schuweb_sitemap_weblinks
 				->from($db->qn('#__weblinks'))
 				->setLimit(ArrayHelper::getValue($params, 'max_links', null, 'INT'))
 				->order($db->escape('ordering') . ' ' . $db->escape('ASC'))
-				->where($db->qn('catid') . ' = ' . $db->q($category->id));
-            
+                ->where($db->qn('catid') . ' = ' . $db->q($category->id))
+                ->where($db->qn('state') . ' = 1')
+                ->extendWhere(
+                    'AND',
+                    [
+                        $db->qn('publish_up') . ' IS NULL',
+                        $db->qn('publish_up') . ' <= :nowDate1',
+                    ],
+                    'OR'
+                )
+                ->extendWhere(
+                    'AND',
+                    [
+                        $db->qn('publish_down') . ' IS NULL',
+                        $db->qn('publish_down') . ' >= :nowDate2',
+                    ],
+                    'OR'
+                )
+                ->bind([':nowDate1', ':nowDate2'], $now, ParameterType::STRING);
+
             if ($sitemap->isNewssitemap()){
                 $query->where($db->qn('created') .' > DATE_ADD(CURRENT_TIMESTAMP, INTERVAL -2 DAY)');
             }
