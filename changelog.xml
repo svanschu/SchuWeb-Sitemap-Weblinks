@@ -2,6 +2,22 @@
     <changelog>
         <element>com_schuweb_sitemap</element>
         <type>component</type>
+        <version>5.1.1</version>
+        <fix>
+            <item>fix Weblinks 5.1.0 does not include link status or publishing date (start/finish)</item>
+        </fix>
+        <addition>
+        </addition>
+        <change>
+        </change>
+        <remove>
+        </remove>
+        <note>
+        </note>
+    </changelog>
+    <changelog>
+        <element>com_schuweb_sitemap</element>
+        <type>component</type>
         <version>5.1.0</version>
         <fix>
             <item>fix possible null pointer</item>
