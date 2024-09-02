@@ -7,6 +7,8 @@
  * @link        extensions.schultschik.de
  */
 
+namespace SchuWeb\Plugin\SchuWeb_Sitemap\Weblinks\Extension;
+
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Categories\Categories;
@@ -16,40 +18,87 @@ use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 use Joomla\Component\Weblinks\Site\Helper\RouteHelper;
 use Joomla\Database\ParameterType;
+use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\Event\SubscriberInterface;
+use Joomla\Database\DatabaseDriver;
+use Joomla\Database\DatabaseInterface;
+use SchuWeb\Component\Sitemap\Site\Event\MenuItemPrepareEvent;
+use SchuWeb\Component\Sitemap\Site\Event\TreePrepareEvent;
 
-class schuweb_sitemap_weblinks
+
+class Weblinks extends CMSPlugin implements SubscriberInterface
 {
-	/*
-	 * This function is called before a menu item is printed. We use it to set the
-	 * proper uniqueid for the item and indicate whether the node is expandible or not
-	 */
+    /**
+     * @since __BUMP_VERSION__
+     */
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            'onGetMenus' => 'onGetMenus',
+            'onGetTree'  => 'onGetTree',
+        ];
+    }
 
-	static function prepareMenuItem(&$node, &$params)
-	{
-		$link_query = parse_url($node->link);
-		parse_str(html_entity_decode($link_query['query']), $link_vars);
-		$view = ArrayHelper::getValue($link_vars, 'view', '');
-		if ($view == 'weblink') {
-			$id = intval(ArrayHelper::getValue($link_vars, 'id', 0));
-			if ($id) {
-				$node->uid = 'com_weblinksi' . $id;
-				$node->expandible = false;
-			}
-		} elseif ($view == 'categories') {
-			$node->uid = 'com_weblinkscategories';
-			$node->expandible = true;
-		} elseif ($view == 'category') {
-			$catid = intval(ArrayHelper::getValue($link_vars, 'id', 0));
-			$node->uid = 'com_weblinksc' . $catid;
-			$node->expandible = true;
-		}
-	}
+    /**
+     * This function is called before a menu item is printed. We use it to set the
+     * proper uniqueid for the item
+     *
+     * @param   MenuItemPrepareEvent  Event object
+     *
+     * @return void
+     * @since  __BUMP_VERSION__
+     */
+    public function onGetMenus(MenuItemPrepareEvent $event)
+    {
+        $menu_item  = $event->getMenuItem();
+        $link_query = parse_url($menu_item->link);
+        if (!isset($link_query['query'])) {
+            return;
+        }
 
-	static function getTree(&$sitemap, &$parent, &$params)
+        parse_str(html_entity_decode($link_query['query']), $link_vars);
+        $view = ArrayHelper::getValue($link_vars, 'view', '');
+
+        switch ($view) {
+            case 'weblink':
+                $id = intval(ArrayHelper::getValue($link_vars, 'id', 0));
+                if ($id) {
+                    $menu_item->uid        = "com_weblinksi{$id}";
+                    $menu_item->expandible = false;
+                }
+                break;
+            case 'categories':
+                $menu_item->uid = 'com_weblinkscategories';
+                $menu_item->expandible = true;
+                break;
+            case 'category':
+                $catid = intval(ArrayHelper::getValue($link_vars, 'id', 0));
+                $menu_item->uid = "com_weblinksc{$catid}";
+                $menu_item->expandible = true;
+                break;
+        }
+    }
+
+    /**
+     * Expands a com_content menu item
+     *
+     * @param   TreePrepareEvent  Event object
+     *
+     * @return void
+     * @since  __BUMP_VERSION__
+     */
+    public function onGetTree(TreePrepareEvent $event)
+	//static function getTree(&$sitemap, &$parent, &$params)
 	{
+        $sitemap = $event->getSitemap();
+        $parent  = $event->getNode();
+
+        if ($parent->option != "com_weblinks")
+            return null;
+
         //Image sitemap does not make sense for weblinks
         if ($sitemap->isImagesitemap())
-            return false;
+            return null;
 
 		$link_query = parse_url($parent->link);
 		parse_str(html_entity_decode($link_query['query']), $link_vars);
@@ -63,7 +112,7 @@ class schuweb_sitemap_weblinks
 			return;
 		}
 
-		$include_links = ArrayHelper::getValue($params, 'include_links', 1);
+		$include_links = $this->params->get('include_links', 1);
 		$include_links = ($include_links == 1
 			|| ($include_links == 2 && $sitemap->isXmlsitemap())
 			|| ($include_links == 3 && !$sitemap->isXmlsitemap()));
@@ -108,7 +157,7 @@ class schuweb_sitemap_weblinks
 		$children = $category->getChildren();
 
 		foreach ($children as $cat) {
-			$node = new stdclass;
+			$node = new \stdclass;
 			$node->id = $parent->id;
 			$id = $node->uid = $parent->uid . 'c' . $cat->id;
 			$node->name = $cat->title;
@@ -135,7 +184,9 @@ class schuweb_sitemap_weblinks
 		}
 
 		if ($params['include_links']) {
-			$db = Factory::getDbo();
+			/** @var DatabaseDriver $db */
+            $db = Factory::getContainer()->get(DatabaseInterface::class);
+
 			$query = $db->getQuery(true);
             $now   = Factory::getDate()->toSql();
 			$query->select(
@@ -183,7 +234,7 @@ class schuweb_sitemap_weblinks
 				$item_params = new Registry;
 				$item_params->loadString($link->params);
 
-				$node = new stdclass;
+				$node = new \stdclass;
 				$node->id = $parent->id;
 				$id = $node->uid = $parent->uid . 'i' . $link->id;
 				$node->name = $link->title;
