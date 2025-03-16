@@ -118,8 +118,8 @@ class Weblinks extends CMSPlugin implements SubscriberInterface
 			|| ($include_links == 3 && !$sitemap->isXmlsitemap()));
 		$params['include_links'] = $include_links;
 
-		$priority = ArrayHelper::getValue($params, 'cat_priority', $parent->priority);
-		$changefreq = ArrayHelper::getValue($params, 'cat_changefreq', $parent->changefreq);
+		$priority = $this->params->get('cat_priority', $parent->priority);
+		$changefreq = $this->params->get( 'cat_changefreq', $parent->changefreq);
 		if ($priority == '-1')
 			$priority = $parent->priority;
 		if ($changefreq == '-1')
@@ -128,8 +128,8 @@ class Weblinks extends CMSPlugin implements SubscriberInterface
 		$params['cat_priority'] = $priority;
 		$params['cat_changefreq'] = $changefreq;
 
-		$priority = ArrayHelper::getValue($params, 'link_priority', $parent->priority);
-		$changefreq = ArrayHelper::getValue($params, 'link_changefreq', $parent->changefreq);
+		$priority = $this->params->get( 'link_priority', $parent->priority);
+		$changefreq = $this->params->get('link_changefreq', $parent->changefreq);
 		if ($priority == '-1')
 			$priority = $parent->priority;
 
