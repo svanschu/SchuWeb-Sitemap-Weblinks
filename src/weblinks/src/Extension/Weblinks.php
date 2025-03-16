@@ -139,10 +139,7 @@ class Weblinks extends CMSPlugin implements SubscriberInterface
 		$params['link_priority'] = $priority;
 		$params['link_changefreq'] = $changefreq;
 
-		$options = array();
-		$options['countItems'] = false;
-		$options['catid'] = rand();
-		$categories = Categories::getInstance('Weblinks', $options);
+        $categories = Factory::getApplication()->bootComponent("weblinks")->getCategory(["countItems" => false, "catid" => rand()]);
 		$category = $categories->get($catid ?: 'root', true);
 
 		$weblinks_params = ComponentHelper::getParams('com_weblinks');
