@@ -146,10 +146,10 @@ class Weblinks extends CMSPlugin implements SubscriberInterface
 
 		$params['count_clicks'] = $weblinks_params->get('count_clicks', "1");
 
-		self::getCategoryTree($sitemap, $parent, $params, $category);
+		$this->getCategoryTree($sitemap, $parent, $params, $category);
 	}
 
-	static function getCategoryTree(&$sitemap, &$parent, &$params, &$category)
+	private function getCategoryTree(&$sitemap, &$parent, &$params, &$category)
 	{
 		$children = $category->getChildren();
 
