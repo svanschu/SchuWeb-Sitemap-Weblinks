@@ -2,6 +2,25 @@
     <changelog>
         <element>schuweb_sitemap_weblinks</element>
         <type>component</type>
+        <version>5.2.1</version>
+        <fix>
+            <item>fix deprecated getDbo()</item>
+            <item>fix missing visibility identifier</item>
+        </fix>
+        <addition>
+        </addition>
+        <change>
+            <item>PSR-12 formatting</item>
+        </change>
+        <remove>
+            <item>remove obsolete comments</item>
+        </remove>
+        <note>
+        </note>
+    </changelog>
+    <changelog>
+        <element>schuweb_sitemap_weblinks</element>
+        <type>component</type>
         <version>5.2.0</version>
         <fix>
         </fix>
