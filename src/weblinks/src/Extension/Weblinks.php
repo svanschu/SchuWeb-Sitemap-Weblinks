@@ -157,7 +157,7 @@ class Weblinks extends CMSPlugin implements SubscriberInterface
             $node->id         = $parent->id;
             $id               = $node->uid = $parent->uid . 'c' . $cat->id;
             $node->name       = $cat->title;
-            $node->link       = RouteHelper::getCategoryRoute($cat);
+            $node->link       = RouteHelper::getCategoryRoute($cat->id, $cat->language);
             $node->priority   = $params['cat_priority'];
             $node->changefreq = $params['cat_changefreq'];
             $node->browserNav = $parent->browserNav;
@@ -192,7 +192,8 @@ class Weblinks extends CMSPlugin implements SubscriberInterface
                     $db->qn('url'),
                     $db->qn('params'),
                     $db->qn('modified'),
-                    $db->qn('created')
+                    $db->qn('created'),
+                    $db->qn('language')
                 )
             )
                 ->from($db->qn('#__weblinks'))
@@ -240,9 +241,13 @@ class Weblinks extends CMSPlugin implements SubscriberInterface
 
                 if ($item_params->get('count_clicks', $params['count_clicks']) == "1") {
                     $node->link = 'index.php?option=com_weblinks&task=weblink.go&id=' . $link->id . '&Itemid=' . ($Itemid ?: $parent->id);
+                    if ($link->language && $link->language !== '*' && \Joomla\CMS\Language\Multilanguage::isEnabled()) {
+                        $node->link .= "&lang={$link->language}";
+                    }
                 } else {
-                    $node->link = $link->url;
+                    $node->link = RouteHelper::getWeblinkRoute($link->id, $category->id, $link->language);
                 }
+
                 $node->priority   = $params['link_priority'];
                 $node->changefreq = $params['link_changefreq'];
 
